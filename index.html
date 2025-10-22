@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Style</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Untuk ikon -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background 0.3s ease;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        .chat-container {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        body.dark .chat-container {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+        }
+        .header {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        body.dark .header {
+            background: #2c3e50;
+        }
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .chat-box {
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: slideIn 0.5s ease;
+            position: relative;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bot {
+            background: #f1f1f1;
+            text-align: left;
+            border-bottom-left-radius: 5px;
+        }
+        body.dark .bot {
+            background: #34495e;
+            color: white;
+        }
+        .user {
+            background: #4CAF50;
+            color: white;
+            text-align: right;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        .input-area {
+            display: flex;
+            border-top: 1px solid #ddd;
+            background: white;
+        }
+        body.dark .input-area {
+            background: #2c3e50;
+            border-top: 1px solid #555;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+        }
+        .input-area button {
+            padding: 15px 20px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 16px;
+        }
+        .input-area button:hover {
+            background: #45a049;
+        }
+        .typing {
+            display: none;
+            font-style: italic;
+            color: #888;
+            margin: 10px 0;
+        }
+        @media (max-width: 600px) {
+            .chat-container { width: 95%; }
+            .chat-box { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <span><i class="fas fa-robot"></i> Chatbot Keren</span>
+            <i class="fas fa-moon theme-toggle" onclick="toggleTheme()"></i>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="bot message">Halo! Aku chatbot keren. Ketik <b>help</b> untuk lihat menu perintah 😎 <i class="fas fa-rocket"></i></div>
+        </div>
+        <div class="typing" id="typing">Bot sedang mengetik...</div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter'){sendMessage()}">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        let isDark = false;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            document.body.classList.toggle('dark');
+            document.querySelector('.theme-toggle').className = isDark ? 'fas fa-sun theme-toggle' : 'fas fa-moon theme-toggle';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("userInput");
+            const chatBox = document.getElementById("chatBox");
+            const typing = document.getElementById("typing");
+            const userText = input.value.trim().toLowerCase();
+            if (!userText) return;
+
+            // Tampilkan pesan user
+            chatBox.innerHTML += `<div class="user message">${input.value} <i class="fas fa-user"></i></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Simulasi typing
+            typing.style.display = 'block';
+            setTimeout(() => {
+                typing.style.display = 'none';
+                respond(userText, chatBox);
+            }, 1000 + Math.random() * 1000); // Random delay untuk efek realistis
+
+            input.value = "";
+        }
+
+        function respond(userText, chatBox) {
+            let botReply = "";
+            const emojis = ['😊', '🤖', '✨', '🚀', '💡'];
+
+            if (userText.includes("halo") || userText.includes("hi")) {
+                botReply = "Halo juga! Apa kabar hari ini? " + emojis[Math.floor(Math.random() * emojis.length)];
+            } 
+            else if (userText.includes("nama")) {
+                botReply = "Namaku Chatbot Keren! Siap bantu kamu kapan saja. " + emojis[Math.floor(Math.random() * emojis.length)];
+            } 
+            else if (userText.includes("kabar")) {
+                botReply = "Aku super baik! Kamu gimana? Cerita dong. " + emojis[Math.floor(Math.random() * emojis.length)];
+            } 
+            else if (userText.includes("terima kasih")) {
+                botReply = "Sama-sama! Senang bisa bantu. " + emojis[Math.floor(Math.random() * emojis.length)];
+            } 
+            else if (userText.includes("motivasi")) {
+                botReply = "Kalau kamu merasa jalanmu gelap, mungkin kamu memang ditakdirkan bersinar lebih terang di akhir perjalanan. Tetap semangat! " + emojis[Math.floor(Math.random() * emojis.length)];
+            }
+            else if (userText.includes("waktu")) {
+                const now = new Date();
+                botReply = `Sekarang jam ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} WIB. Waktunya produktif! ⏰`;
+            }
+            else if (userText.includes("cuaca")) {
+                botReply = "Cuaca hari ini cerah dan hangat! ☀️";
+            }
+            else if (userText.includes("help") || userText.includes("menu")) {
+                botReply = 
+                "🚀 <b>Menu Perintah Keren:</b><br>" +
+                "- halo / hi → sapaan<br>" +
+                "- nama → tanya nama bot<br>" +
+                "- kabar → tanya kabar<br>" +
+                "- terima kasih → respon sopan<br>" +
+                "- motivasi → kata motivasi<br>" +
+                "- waktu → lihat waktu sekarang<br>" +
+                "- cuaca → info cuaca simulasi<br>" +        
+                "- help / menu → lihat semua perintah<br>" +
+                "- tema → toggle tema gelap/terang";
+            }
+            else if (userText.includes("tema")) {
+                toggleTheme();
+                botReply = "Tema diubah! " + (isDark ? "🌙 Mode gelap aktif." : "☀️ Mode terang aktif.");
+            }
+            else {
+                botReply = "Maaf, aku belum mengerti. Coba ketik <b>'help'</b> ya! 🤔";
+            }
+
+            // Tampilkan jawaban bot
+            chatBox.innerHTML += `<div class="bot message">${botReply}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
